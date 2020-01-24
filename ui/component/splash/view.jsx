@@ -8,6 +8,7 @@ import ModalWalletUnlock from 'modal/modalWalletUnlock';
 import ModalIncompatibleDaemon from 'modal/modalIncompatibleDaemon';
 import ModalUpgrade from 'modal/modalUpgrade';
 import ModalDownloading from 'modal/modalDownloading';
+import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
 import Card from 'component/common/card';
 import I18nMessage from 'component/i18nMessage';
 import 'css-doodle';
@@ -25,6 +26,7 @@ type Props = {
   hideModal: () => void,
   modal: ?{
     id: string,
+    modalProps: {},
   },
   animationHidden: boolean,
   setClientSetting: (string, boolean) => void,
@@ -205,22 +207,24 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
   timeout: ?TimeoutID;
 
   renderModals() {
-    const { modal } = this.props;
-    const modalId = modal && modal.id;
+    const { modal = {} } = this.props;
 
-    if (!modalId) {
+    if (!modal || !modal.id) {
       return null;
     }
 
-    switch (modalId) {
+    const { id, modalProps } = modal;
+    switch (id) {
       case MODALS.INCOMPATIBLE_DAEMON:
-        return <ModalIncompatibleDaemon onContinueAnyway={this.runWithIncompatibleDaemon} />;
+        return <ModalIncompatibleDaemon onContinueAnyway={this.runWithIncompatibleDaemon} {...modalProps} />;
       case MODALS.WALLET_UNLOCK:
-        return <ModalWalletUnlock />;
+        return <ModalWalletUnlock {...modalProps} />;
       case MODALS.UPGRADE:
-        return <ModalUpgrade />;
+        return <ModalUpgrade {...modalProps} />;
       case MODALS.DOWNLOADING:
-        return <ModalDownloading />;
+        return <ModalDownloading {...modalProps} />;
+      case MODALS.AUTO_UPDATE_DOWNLOADED:
+        return <ModalAutoUpdateDownloaded {...modalProps} />;
       default:
         return null;
     }
